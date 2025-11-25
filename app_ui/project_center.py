@@ -4,11 +4,11 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt
 from datetime import datetime, timedelta
-
-from models import Project
-from utils import format_datetime
+from app_ui.models import Project
 from cedar.utils import print
 
+def format_datetime(dt: datetime):
+    return dt.strftime("%Y-%m-%d %H:%M:%S")
 
 class ProjectListWidget(QWidget):
     """项目列表侧边栏"""

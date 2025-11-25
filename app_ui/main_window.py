@@ -1,11 +1,11 @@
 from PyQt6.QtWidgets import QMainWindow
 from datetime import datetime
+from pathlib import Path
+from app_ui.models import Project, Workspace
 
-from models import Project, Workspace
-from utils import get_projects_dir, generate_id
 from app_ui.project_center import ProjectCenterWidget
-from config import get_config
-from cedar.utils import print
+from utils.utils import generate_id, format_datetime
+from cedar.utils import print, load_config
 
 
 class MainWindow(QMainWindow):
@@ -13,13 +13,12 @@ class MainWindow(QMainWindow):
     
     def __init__(self):
         super().__init__()
-        config = get_config()
-        self.setWindowTitle(config.window_title)
-        self.resize(config.window_width, config.window_height)
-        
+        config = load_config()
+        self.setWindowTitle(config['window_title'])
+        self.resize(config['window_width'], config['window_height'])
         self.current_project = None
         self.current_workspace = None
-        self.projects_dir = get_projects_dir()
+        self.projects_dir = Path(config['project_dir'])
         print(f"[启动] 主窗口初始化，项目目录: {self.projects_dir}")
         
         self.init_ui()
