@@ -9,7 +9,7 @@ from cedar.utils import print
 
 
 class MainWindow(QMainWindow):
-    """主窗口 - Linux 风格，使用 qfluentwidgets 组件"""
+    """主窗口 - Linux 风格，使用原生 PyQt6"""
     
     def __init__(self):
         super().__init__()

@@ -1,10 +1,11 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QMessageBox, QInputDialog
-from PyQt6.QtCore import Qt, pyqtSignal
-from qfluentwidgets import (
-    CardWidget, SimpleCardWidget, BodyLabel, CaptionLabel, 
-    PrimaryPushButton, PushButton, LineEdit,
-    ScrollArea, VBoxLayout
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from PyQt6.QtWidgets import (
+    QWidget, QVBoxLayout, QHBoxLayout, QScrollArea, QFrame,
+    QPushButton, QLabel, QMessageBox, QInputDialog, QLineEdit, QGridLayout
 )
+from PyQt6.QtCore import Qt
 from datetime import datetime, timedelta
 
 from models import Project
@@ -12,39 +13,105 @@ from utils import format_datetime
 from cedar.utils import print
 
 
-class ProjectCard(SimpleCardWidget):
-    """项目卡片组件 - 使用 qfluentwidgets 简化"""
+class ProjectListWidget(QWidget):
+    """项目列表侧边栏"""
     
-    project_clicked = pyqtSignal(object)  # 项目点击信号，传递 project 对象
-    
-    def __init__(self, project: Project, parent=None):
+    def __init__(self, parent=None):
         super().__init__(parent)
-        self.project = project
-        self.setFixedSize(280, 120)
-        self._setup_ui()
+        self.main_window = parent.main_window if parent else None
+        self.selected_project = None
+        self.selected_card = None
+        self.project_cards = []
+        self.init_ui()
     
-    def _setup_ui(self):
+    def init_ui(self):
         """设置UI"""
-        layout = VBoxLayout(self)
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(16, 16, 16, 16)
+        layout.setSpacing(12)
+        
+        # 标题
+        title = QLabel("项目中心")
+        title.setStyleSheet("font-size: 16px; font-weight: bold;")
+        layout.addWidget(title)
+        
+        # 搜索框
+        search = QLineEdit()
+        search.setPlaceholderText("搜索项目...")
+        layout.addWidget(search)
+        
+        # 滚动区域
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        
+        scroll_widget = QWidget()
+        self.scroll_layout = QVBoxLayout(scroll_widget)
+        self.scroll_layout.setSpacing(12)
+        self.scroll_layout.addStretch()
+        
+        scroll.setWidget(scroll_widget)
+        layout.addWidget(scroll)
+        
+        # 新建项目按钮
+        btn_new = QPushButton("新建项目")
+        btn_new.clicked.connect(self.create_project)
+        layout.addWidget(btn_new)
+    
+    def load_projects(self, projects: list):
+        """加载项目列表"""
+        # 清除现有卡片
+        for card in self.project_cards:
+            card.setParent(None)
+        self.project_cards.clear()
+        self.selected_card = None
+        self.selected_project = None
+        
+        # 创建新卡片
+        for project in projects:
+            card = self._create_project_card(project)
+            self.scroll_layout.insertWidget(self.scroll_layout.count() - 1, card)
+            self.project_cards.append(card)
+    
+    def _create_project_card(self, project: Project):
+        """创建项目卡片"""
+        card = QFrame()
+        card.setFrameShape(QFrame.Shape.Box)
+        card.setFrameShadow(QFrame.Shadow.Raised)
+        card.setCursor(Qt.CursorShape.PointingHandCursor)
+        card.setStyleSheet("padding: 12px; margin: 4px;")
+        
+        layout = QVBoxLayout(card)
+        layout.setContentsMargins(12, 12, 12, 12)
+        layout.setSpacing(8)
         
         # 项目名称
-        name_label = BodyLabel(self.project.name, self)
-        name_label.setStyleSheet("font-size: 16px; font-weight: bold;")
-        layout.addWidget(name_label)
+        name = QLabel(project.name)
+        name.setStyleSheet("font-size: 16px; font-weight: bold;")
+        layout.addWidget(name)
         
         # 项目描述
-        desc = self.project.desc or "无描述"
-        desc_label = CaptionLabel(desc, self)
-        desc_label.setWordWrap(True)
-        desc_label.setMaximumHeight(40)
-        layout.addWidget(desc_label)
+        desc = QLabel(project.desc or "无描述")
+        desc.setWordWrap(True)
+        desc.setMaximumHeight(40)
+        desc.setStyleSheet("color: #666;")
+        layout.addWidget(desc)
         
         # 时间标签
-        time_str = self._format_time(self.project.created_at)
-        time_label = CaptionLabel(time_str, self)
+        time_str = self._format_time(project.created_at)
+        time_label = QLabel(time_str)
+        time_label.setStyleSheet("font-size: 12px; color: #999;")
         layout.addWidget(time_label)
         
-        layout.addStretch(1)
+        # 点击事件
+        def make_click_handler(card_ref, project_ref):
+            def handler(event):
+                self._on_card_clicked(card_ref, project_ref)
+            return handler
+        
+        card.mousePressEvent = make_click_handler(card, project)
+        
+        return card
     
     def _format_time(self, dt: datetime) -> str:
         """格式化时间显示"""
@@ -62,95 +129,20 @@ class ProjectCard(SimpleCardWidget):
         else:
             return format_datetime(dt)
     
-    def mouseReleaseEvent(self, event):
-        """鼠标释放事件 - 重写以发射自定义信号"""
-        super().mouseReleaseEvent(event)
-        if event.button() == Qt.MouseButton.LeftButton:
-            self.project_clicked.emit(self.project)
-
-
-class ProjectListWidget(QWidget):
-    """项目列表侧边栏"""
-    
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.main_window = parent.main_window if parent else None
-        self.selected_project = None
-        self.selected_card = None
-        self.project_cards = []
-        self._setup_ui()
-    
-    def _setup_ui(self):
-        """设置UI"""
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(16, 16, 16, 16)
-        layout.setSpacing(12)
-        
-        # 标题
-        title = BodyLabel("项目中心", self)
-        layout.addWidget(title)
-        
-        # 搜索框
-        self.search_box = LineEdit(self)
-        self.search_box.setPlaceholderText("搜索项目...")
-        layout.addWidget(self.search_box)
-        
-        # 滚动区域
-        scroll = ScrollArea(self)
-        scroll.setWidgetResizable(True)
-        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        
-        scroll_widget = QWidget()
-        self.scroll_layout = QVBoxLayout(scroll_widget)
-        self.scroll_layout.setSpacing(12)
-        self.scroll_layout.addStretch()
-        
-        scroll.setWidget(scroll_widget)
-        layout.addWidget(scroll)
-        
-        # 新建项目按钮
-        btn_new = PrimaryPushButton("新建项目", self)
-        btn_new.clicked.connect(self.create_project)
-        layout.addWidget(btn_new)
-    
-    def load_projects(self, projects: list):
-        """加载项目列表"""
-        # 清除现有卡片
-        for card in self.project_cards:
-            card.setParent(None)
-        self.project_cards.clear()
-        self.selected_card = None
-        self.selected_project = None
-        
-        # 创建新卡片
-        for project in projects:
-            card = ProjectCard(project, self)
-            card.project_clicked.connect(self._on_card_clicked)
-            self.scroll_layout.insertWidget(self.scroll_layout.count() - 1, card)
-            self.project_cards.append(card)
-    
-    def _on_card_clicked(self, project: Project):
+    def _on_card_clicked(self, card, project):
         """卡片点击处理"""
-        # 找到对应的卡片
-        card = None
-        for c in self.project_cards:
-            if c.project.id == project.id:
-                card = c
-                break
-        
-        if not card or self.selected_card == card:
+        if self.selected_card == card:
             return
         
-        # 更新选中状态 - Linux 风格，使用简单的边框
+        # 更新选中状态
         if self.selected_card:
-            self.selected_card.setStyleSheet("")  # 恢复默认样式
+            self.selected_card.setStyleSheet("padding: 12px; margin: 4px;")
         
-        card.setStyleSheet("border: 2px solid #0078d4;")  # 选中边框
+        card.setStyleSheet("padding: 12px; margin: 4px; border: 2px solid #0078d4;")
         
         self.selected_card = card
         self.selected_project = project
         
-        # 显示项目详情
         if self.main_window:
             self.main_window.show_project_detail(project)
     
@@ -184,59 +176,74 @@ class ProjectDetailWidget(QWidget):
         self.main_window = parent.main_window if parent and hasattr(parent, 'main_window') else None
         self.current_project = None
         self.selected_workspace = None
-        self._setup_ui()
+        self.init_ui()
     
-    def _setup_ui(self):
+    def init_ui(self):
         """设置UI"""
         layout = QVBoxLayout(self)
         layout.setContentsMargins(24, 24, 24, 24)
         layout.setSpacing(16)
         
         # 项目详情卡片
-        self.detail_card = CardWidget(self)
-        detail_layout = VBoxLayout(self.detail_card)
+        self.detail_card = QFrame()
+        self.detail_card.setFrameShape(QFrame.Shape.Box)
+        self.detail_card.setFrameShadow(QFrame.Shadow.Raised)
+        self.detail_card.setStyleSheet("padding: 16px;")
         
-        title = BodyLabel("项目详情", self.detail_card)
+        detail_layout = QVBoxLayout(self.detail_card)
+        detail_layout.setContentsMargins(16, 16, 16, 16)
+        detail_layout.setSpacing(12)
+        
+        title = QLabel("项目详情")
         title.setStyleSheet("font-size: 18px; font-weight: bold;")
         detail_layout.addWidget(title)
         
-        self.name_label = BodyLabel("", self.detail_card)
+        self.name_label = QLabel("")
         self.name_label.setStyleSheet("font-size: 16px; font-weight: bold;")
         detail_layout.addWidget(self.name_label)
         
-        self.desc_label = CaptionLabel("", self.detail_card)
+        self.desc_label = QLabel("")
         self.desc_label.setWordWrap(True)
         detail_layout.addWidget(self.desc_label)
         
-        self.time_label = CaptionLabel("", self.detail_card)
+        self.time_label = QLabel("")
+        self.time_label.setStyleSheet("color: #666;")
         detail_layout.addWidget(self.time_label)
         
-        self.path_label = CaptionLabel("", self.detail_card)
+        self.path_label = QLabel("")
+        self.path_label.setStyleSheet("color: #666; font-size: 12px;")
         detail_layout.addWidget(self.path_label)
         
         layout.addWidget(self.detail_card)
         
         # 工作区卡片
-        workspace_card = CardWidget(self)
-        ws_layout = VBoxLayout(workspace_card)
+        workspace_card = QFrame()
+        workspace_card.setFrameShape(QFrame.Shape.Box)
+        workspace_card.setFrameShadow(QFrame.Shadow.Raised)
+        workspace_card.setStyleSheet("padding: 16px;")
         
-        ws_title = BodyLabel("工作区", workspace_card)
+        ws_layout = QVBoxLayout(workspace_card)
+        ws_layout.setContentsMargins(16, 16, 16, 16)
+        ws_layout.setSpacing(12)
+        
+        ws_title = QLabel("工作区")
         ws_title.setStyleSheet("font-size: 18px; font-weight: bold;")
         ws_layout.addWidget(ws_title)
         
-        self.workspace_grid = QWidget(workspace_card)
+        self.workspace_grid = QWidget()
         self.grid_layout = QGridLayout(self.workspace_grid)
         self.grid_layout.setSpacing(12)
         ws_layout.addWidget(self.workspace_grid)
         
-        btn_new_ws = PushButton("新建工作区", workspace_card)
+        btn_new_ws = QPushButton("新建工作区")
         btn_new_ws.clicked.connect(self.create_workspace)
         ws_layout.addWidget(btn_new_ws)
         
         layout.addWidget(workspace_card)
         
         # 进入工作区按钮
-        btn_enter = PrimaryPushButton("进入工作区", self)
+        btn_enter = QPushButton("进入工作区")
+        btn_enter.setStyleSheet("font-weight: bold; padding: 8px;")
         btn_enter.clicked.connect(self.enter_workspace)
         layout.addWidget(btn_enter)
         
@@ -288,18 +295,22 @@ class ProjectDetailWidget(QWidget):
     
     def _create_workspace_card(self, workspace):
         """创建工作区卡片"""
-        card = SimpleCardWidget(self.workspace_grid)
+        card = QFrame()
+        card.setFrameShape(QFrame.Shape.Box)
+        card.setFrameShadow(QFrame.Shadow.Raised)
+        card.setStyleSheet("padding: 12px;")
         card.setFixedSize(200, 120)
         
-        layout = VBoxLayout(card)
+        layout = QVBoxLayout(card)
+        layout.setContentsMargins(12, 12, 12, 12)
         
-        name = BodyLabel(workspace.name, card)
+        name = QLabel(workspace.name)
         name.setStyleSheet("font-size: 14px; font-weight: bold;")
         layout.addWidget(name)
         
         layout.addStretch()
         
-        btn = PushButton("进入", card)
+        btn = QPushButton("进入")
         btn.clicked.connect(lambda: self._on_workspace_clicked(workspace))
         layout.addWidget(btn)
         
@@ -350,9 +361,9 @@ class ProjectCenterWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.main_window = parent
-        self._setup_ui()
+        self.init_ui()
     
-    def _setup_ui(self):
+    def init_ui(self):
         """设置UI"""
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
