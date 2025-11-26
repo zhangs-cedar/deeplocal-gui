@@ -48,6 +48,7 @@ class Button(QPushButton):
     
     def _on_clicked(self):
         # 点击时发射自定义信号
+        print("click")
         self.clicked_signal.emit()
     
     def click(self, fn=None):

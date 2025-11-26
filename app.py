@@ -18,7 +18,7 @@ def main():
         blocks.resize(800, 600)
                 
         # 使用 with 语法，更优雅
-        with Header(blocks=blocks) as header:
+        with Header() as header:
             header.addLeft(Button("🚀", variant='text'))  # 左侧添加图标
             title_btn = Button("简化示例", variant='text')
             title_btn.click(on_title_click)
