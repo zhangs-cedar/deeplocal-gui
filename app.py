@@ -14,12 +14,8 @@ def main():
     with Blocks(theme='light') as blocks:
         blocks.setWindowTitle("简化示例")
         blocks.resize(800, 600)
-        # 创建页面容器
-        pages = Pages()
-        blocks.addWidget(pages)
-        
         # 创建不同的页面
-        with pages:
+        with Pages() as pages:
             # 项目页面
             with Column() as project_page:
                 with Row():

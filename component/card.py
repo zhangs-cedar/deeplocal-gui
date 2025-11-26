@@ -48,6 +48,8 @@ class Card(QFrame, _ContextMixin):
             layout.addWidget(desc)
         
         layout.addStretch()
+        self.setMaximumHeight(300)
+        self.setMaximumWidth(400)
         self._apply_style()
         
         if on_click:
