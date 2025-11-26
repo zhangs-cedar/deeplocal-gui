@@ -14,43 +14,47 @@ def main():
     with Blocks(theme='light') as blocks:
         blocks.setWindowTitle("简化示例")
         blocks.resize(800, 600)
-        # 创建不同的页面
+        # 创建不同的页面（使用延迟加载，只在点击时才渲染）
         with Pages() as pages:
-            # 项目页面
-            with Column() as project_page:
-                with Row():
+            # 项目页面 - 使用工厂函数延迟加载
+            def create_project_page():
+                with Row() as project_page:
                     Card(title="项目 1", description="""这是项目 11111111111111111111111111 \n 1111111111111111111111111111111111111111 \n 1111111111111111111111111111111111111111""", icon="📁", variant='secondary')
                     Card(title="项目 2", description="这是项目 2", icon="📁", variant='secondary')
-                    Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
-                    Card(title="项目 1", description="这是项目 1", icon="📁", variant='secondary')
-                    Card(title="项目 2", description="这是项目 2", icon="📁", variant='secondary')
-                    Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
-                    Card(title="项目 1", description="这是项目 1", icon="📁", variant='secondary')
-                    Card(title="项目 2", description="这是项目 2", icon="📁", variant='secondary')
-                    Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
-                    Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
-                    Card(title="项目 1", description="这是项目 1", icon="📁", variant='secondary')
-                    Card(title="项目 2", description="这是项目 2", icon="📁", variant='secondary')
-                    Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
-                    Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
-                    Card(title="项目 1", description="这是项目 1", icon="📁", variant='secondary')
-                    Card(title="项目 2", description="这是项目 2", icon="📁", variant='secondary')
-                    Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
-            pages.add_page("项目", project_page)
+                return project_page
             
-            # 模版页面
-            with Column() as template_page:
-                with Row():
+            pages.add_page("项目", create_project_page)
+            
+            # 模版页面 - 使用工厂函数延迟加载
+            def create_template_page():
+                with Row() as template_page:
                     Card(title="模版 1", description="这是模版 1", icon="📄", variant='secondary')
                     Card(title="模版 2", description="这是模版 2", icon="📄", variant='secondary')
-            pages.add_page("模版", template_page)
+                    Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
+                    Card(title="模版 1", description="这是模版 1", icon="📄", variant='secondary')
+                    Card(title="模版 2", description="这是模版 2", icon="📄", variant='secondary')
+                    Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
+                    Card(title="模版 1", description="这是模版 1", icon="📄", variant='secondary')
+                    Card(title="模版 2", description="这是模版 2", icon="📄", variant='secondary')
+                    Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
+                    Card(title="模版 1", description="这是模版 1", icon="📄", variant='secondary')
+                    Card(title="模版 2", description="这是模版 2", icon="📄", variant='secondary')
+                    Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
+                    Card(title="模版 1", description="这是模版 1", icon="📄", variant='secondary')
+                    Card(title="模版 2", description="这是模版 2", icon="📄", variant='secondary')
+                    Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
+                return template_page
             
-            # 社区页面
-            with Column() as community_page:
-                with Row():
+            pages.add_page("模版", create_template_page)
+            
+            # 社区页面 - 使用工厂函数延迟加载
+            def create_community_page():
+                with Row() as community_page:
                     Card(title="社区动态", description="查看社区最新动态", icon="👥", variant='secondary')
                     Card(title="热门话题", description="浏览热门话题", icon="🔥", variant='secondary')
-            pages.add_page("社区", community_page)
+                return community_page
+            
+            pages.add_page("社区", create_community_page)
         
         # 使用 with 语法，更优雅
         with Header() as header:
