@@ -16,26 +16,25 @@ def main():
             Button("按钮 3", variant='secondary')
         
         with Row():
-            Card(
-                title="大按钮 1",
-                description="点击大按钮区域会触发 print",
-                icon="🚀",
-                variant='primary'
-            )
             btn2 = Card(
                 title="大按钮 2",
                 description="支持图标、标题和描述文字",
                 icon="⭐",
                 variant='secondary'
             )
-            btn2.click(lambda: print("大按钮 2 被点击了！"))
-            
+            Card(
+                title="大按钮 1",
+                description="点击大按钮区域会触发 print",
+                icon="🚀",
+                variant='primary'
+            )
             btn3 = Card(
                 title="大按钮 3",
                 description="点击大按钮区域会触发",
                 icon="💡",
                 variant='primary'
             )
+            btn2.click(lambda: print("大按钮 2 被点击了！"))
             btn3.click(lambda: print("大按钮 3 被点击了！"))
 
     
