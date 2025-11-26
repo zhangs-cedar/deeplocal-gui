@@ -2,6 +2,8 @@ import sys
 from PyQt6.QtWidgets import QApplication, QLabel
 from component import Blocks, Row, Column, Button, Card, Header, ThemeButton
 
+def on_click():
+    print("点击了")
 
 def on_title_click():
     print("标题被点击了！")
@@ -23,13 +25,9 @@ def main():
             # 方式1: 初始化时传入回调（更简洁）
             header.addLeft(Button("简化示例", variant='text', on_click=on_title_click))
             # 方式2: 使用 .click() 方法（更灵活，支持链式调用）
-            # title_btn = Button("简化示例", variant='text')
-            # title_btn.click(on_title_click)
-            # header.addLeft(title_btn)
-            
-            header.addCenter(Button("居中按钮", variant='text'))  # 中间添加按钮
-            header.addCenter(Button("居中按钮", variant='text'))  # 中间添加按钮
-            header.addCenter(Button("居中按钮", variant='text'))  # 中间添加按钮
+            header.addCenter(Button("居中按钮", variant='text',on_click=on_click))  # 中间添加按钮
+            header.addCenter(Button("居中按钮", variant='text',on_click=on_click))  # 中间添加按钮
+            header.addCenter(Button("居中按钮", variant='text',on_click=on_click))  # 中间添加按钮
             header.addRight(ThemeButton(blocks))
             header.addRight(Button("👤", variant='text', on_click=on_avatar_click))  # 右侧添加头像按钮
             blocks.setHeader(header)
