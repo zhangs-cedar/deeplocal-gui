@@ -1,6 +1,6 @@
 import sys
 from PyQt6.QtWidgets import QApplication
-from component import Blocks, Row, Column, Button, ThemeToggleButton, Card
+from component import Blocks, Row, Column, Button, Card, Header
 
 
 def main():
@@ -8,7 +8,8 @@ def main():
     with Blocks(theme='light') as blocks:
         blocks.setWindowTitle("简化示例")
         blocks.resize(800, 600)
-        ThemeToggleButton(blocks)
+        header = Header(title="简化示例", icon="🚀", avatar="👤", blocks=blocks)
+        blocks.setHeader(header)
         
         with Row():
             Button("按钮 1123124123", variant='secondary')

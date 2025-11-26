@@ -4,6 +4,6 @@ from .row import Row
 from .column import Column
 from .button import Button
 from .card import Card
-from .theme_toggle_button import ThemeToggleButton
+from .header import Header
 
-__all__ = ['Theme', 'Blocks', 'Row', 'Column', 'Button', 'Card', 'ThemeToggleButton']
+__all__ = ['Theme', 'Blocks', 'Row', 'Column', 'Button', 'Card', 'ThemeToggleButton', 'Header']

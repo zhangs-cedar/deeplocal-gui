@@ -11,7 +11,11 @@ class Blocks(QWidget, _ContextMixin):
         super().__init__(parent)
         self._theme = Theme(theme) if isinstance(theme, str) else (theme or Theme('light'))
         
-        scroll = QScrollArea(self)
+        self._main_layout = QVBoxLayout(self)
+        self._main_layout.setContentsMargins(0, 0, 0, 0)
+        self._main_layout.setSpacing(0)
+        
+        scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         scroll.setFrameShape(QScrollArea.Shape.NoFrame)
@@ -23,10 +27,12 @@ class Blocks(QWidget, _ContextMixin):
         self._layout.addStretch()
         scroll.setWidget(content)
         
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget(scroll)
+        self._main_layout.addWidget(scroll)
         self._apply_theme()
+    
+    def setHeader(self, header: QWidget):
+        # 设置顶部导航栏
+        self._main_layout.insertWidget(0, header)
     
     def _apply_theme(self):
         # 应用主题到所有子组件

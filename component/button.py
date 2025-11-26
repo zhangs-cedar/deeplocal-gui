@@ -19,6 +19,9 @@ class Button(QPushButton):
             _auto_add_to_context(self)
     
     def _apply_style(self):
+        # 跳过主题按钮，由 Header 管理其样式
+        if hasattr(self, '_is_theme_button') and self._is_theme_button:
+            return
         # 根据 variant 应用主题样式
         theme = _get_theme(self)
         if self._variant == 'primary':
