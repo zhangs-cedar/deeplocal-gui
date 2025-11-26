@@ -6,5 +6,6 @@ from .button import Button
 from .card import Card
 from .header import Header
 from .theme_button import ThemeButton
+from .pages import Pages
 
-__all__ = ['Theme', 'Blocks', 'Row', 'Column', 'Button', 'Card', 'Header', 'ThemeButton']
+__all__ = ['Theme', 'Blocks', 'Row', 'Column', 'Button', 'Card', 'Header', 'ThemeButton', 'Pages']

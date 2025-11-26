@@ -42,7 +42,7 @@ class Row(QWidget, _ContextMixin):
         spacing = self._layout.spacing()
         margin = self._layout.contentsMargins()
         available = width - margin.left() - margin.right()
-        min_w = 120
+        min_w = 200
         cols = max(1, (available + spacing) // (min_w + spacing))
         
         for i, widget in enumerate(self._widgets):
