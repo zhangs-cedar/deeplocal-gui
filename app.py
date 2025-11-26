@@ -20,16 +20,18 @@ def main():
         # 使用 with 语法，更优雅
         with Header() as header:
             header.addLeft(Button("🚀", variant='text'))  # 左侧添加图标
-            title_btn = Button("简化示例", variant='text')
-            title_btn.click(on_title_click)
-            header.addLeft(title_btn)  # 左侧添加标题按钮
+            # 方式1: 初始化时传入回调（更简洁）
+            header.addLeft(Button("简化示例", variant='text', on_click=on_title_click))
+            # 方式2: 使用 .click() 方法（更灵活，支持链式调用）
+            # title_btn = Button("简化示例", variant='text')
+            # title_btn.click(on_title_click)
+            # header.addLeft(title_btn)
+            
             header.addCenter(Button("居中按钮", variant='text'))  # 中间添加按钮
             header.addCenter(Button("居中按钮", variant='text'))  # 中间添加按钮
             header.addCenter(Button("居中按钮", variant='text'))  # 中间添加按钮
-            avatar_btn = Button("👤", variant='text')
-            avatar_btn.click(on_avatar_click)
             header.addRight(ThemeButton(blocks))
-            header.addRight(avatar_btn)  # 右侧添加头像按钮
+            header.addRight(Button("👤", variant='text', on_click=on_avatar_click))  # 右侧添加头像按钮
             blocks.setHeader(header)
         
         with Row():
@@ -38,11 +40,13 @@ def main():
             Button("按钮 3", variant='secondary')
         
         with Row():
-            btn2 = Card(
+            # 方式1: 初始化时传入回调
+            Card(
                 title="大按钮 2",
                 description="点击大按钮区域会触发 print",
                 icon="⭐",   
-                variant='secondary'
+                variant='secondary',
+                on_click=lambda: print("大按钮 2 被点击了！")
             )
             Card(
                 title="大按钮 1",
@@ -50,13 +54,13 @@ def main():
                 icon="🚀",
                 variant='secondary'
             )
+            # 方式2: 使用 .click() 方法（支持链式调用和动态添加）
             btn3 = Card(
                 title="大按钮 3",
                 description="点击大按钮区域会触发",
                 icon="💡",
                 variant='secondary'
             )
-            btn2.click(lambda: print("大按钮 2 被点击了！"))
             btn3.click(lambda: print("大按钮 3 被点击了！"))
 
     

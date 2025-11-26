@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Optional, Callable
 from PyQt6.QtWidgets import QPushButton
 from PyQt6.QtCore import Qt, pyqtSignal
 from .theme import _get_theme
@@ -8,13 +8,15 @@ from .context import _auto_add_to_context
 class Button(QPushButton):
     clicked_signal = pyqtSignal()
     
-    def __init__(self, value: str = "Run", variant: Literal['primary', 'secondary', 'text'] = 'secondary', parent=None):
-        # 初始化按钮，设置样式和信号连接
+    def __init__(self, value: str = "Run", variant: Literal['primary', 'secondary', 'text'] = 'secondary', 
+                 on_click: Optional[Callable] = None, parent=None):
         super().__init__(str(value), parent)
         self._variant = variant
         self.clicked.connect(self._on_clicked)
         self._apply_style()
         self.setCursor(Qt.CursorShape.PointingHandCursor)
+        if on_click:
+            self.clicked_signal.connect(on_click)
         if not parent:
             _auto_add_to_context(self)
     
@@ -47,8 +49,6 @@ class Button(QPushButton):
         """)
     
     def _on_clicked(self):
-        # 点击时发射自定义信号
-        print("click")
         self.clicked_signal.emit()
     
     def click(self, fn=None):

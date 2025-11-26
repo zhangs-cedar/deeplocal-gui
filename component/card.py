@@ -1,4 +1,4 @@
-from typing import Literal, Union
+from typing import Literal, Union, Optional, Callable
 from pathlib import Path
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QFrame
 from PyQt6.QtCore import Qt, pyqtSignal
@@ -11,7 +11,8 @@ class Card(QFrame, _ContextMixin):
     clicked_signal = pyqtSignal()
     
     def __init__(self, title: str = "", description: str = "", icon: Union[str, Path] = None, 
-                 variant: Literal['primary', 'secondary'] = 'secondary', parent=None):
+                 variant: Literal['primary', 'secondary'] = 'secondary', 
+                 on_click: Optional[Callable] = None, parent=None):
         # 初始化卡片组件，设置图标、标题和描述
         super().__init__(parent)
         self.setFrameShape(QFrame.Shape.Box)
@@ -48,6 +49,10 @@ class Card(QFrame, _ContextMixin):
         
         layout.addStretch()
         self._apply_style()
+        
+        if on_click:
+            self.clicked_signal.connect(on_click)
+        
         if not parent:
             _auto_add_to_context(self)
     
