@@ -15,19 +15,19 @@ class Blocks(QWidget, _ContextMixin):
         self._main_layout.setContentsMargins(0, 0, 0, 0)
         self._main_layout.setSpacing(0)
         
-        scroll = QScrollArea()
-        scroll.setWidgetResizable(True)
-        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        scroll.setFrameShape(QScrollArea.Shape.NoFrame)
+        self._scroll = QScrollArea()
+        self._scroll.setWidgetResizable(True)
+        self._scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self._scroll.setFrameShape(QScrollArea.Shape.NoFrame)
         
         content = QWidget()
         self._layout = QVBoxLayout(content)
         self._layout.setContentsMargins(20, 20, 20, 20)
         self._layout.setSpacing(20)
         self._layout.addStretch()
-        scroll.setWidget(content)
+        self._scroll.setWidget(content)
         
-        self._main_layout.addWidget(scroll)
+        self._main_layout.addWidget(self._scroll)
         self._apply_theme()
     
     def setHeader(self, header: QWidget):
@@ -35,9 +35,39 @@ class Blocks(QWidget, _ContextMixin):
         self._main_layout.insertWidget(0, header)
     
     def _apply_theme(self):
-        # 应用主题到所有子组件
         bg = self._theme.bg
-        self.setStyleSheet(f"QWidget {{ background-color: {bg}; }}")
+        if self._theme.mode == 'light':
+            scrollbar_color = "#CCCCCC"
+            scrollbar_hover = "#999999"
+        else:
+            scrollbar_color = "#666666"
+            scrollbar_hover = "#888888"
+        
+        self.setStyleSheet(f"""
+            QWidget {{ background-color: {bg}; }}
+            QScrollBar:vertical {{
+                border: none;
+                background: transparent;
+                width: 11px;
+                margin: 0px;
+            }}
+            QScrollBar::handle:vertical {{
+                background: {scrollbar_color};
+                border-radius: 5px;
+                min-height: 30px;
+                margin: 2px;
+            }}
+            QScrollBar::handle:vertical:hover {{
+                background: {scrollbar_hover};
+            }}
+            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {{
+                height: 0px;
+            }}
+            QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {{
+                background: transparent;
+            }}
+        """)
+        
         for child in self.findChildren(QWidget):
             if hasattr(child, '_apply_style'):
                 child._apply_style()

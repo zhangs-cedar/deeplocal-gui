@@ -57,13 +57,22 @@ class Card(QFrame, _ContextMixin):
             _auto_add_to_context(self)
     
     def _apply_style(self):
-        # 根据 variant 应用主题样式
         theme = _get_theme(self)
         bg, hover, color = (theme.primary, theme.primary_hover, "#FFFFFF") if self._variant == 'primary' else (theme.bg_secondary, theme.border, theme.text)
         self.setStyleSheet(f"""
-            QFrame#Card {{ background-color: {bg}; border: 1px solid {theme.border}; border-radius: 12px; }}
-            QFrame#Card:hover {{ background-color: {hover}; }}
-            QFrame#Card > QLabel {{ color: {color}; background-color: transparent; }}
+            QFrame#Card {{
+                background-color: {bg};
+                border: 1px solid {theme.border};
+                border-radius: 12px;
+            }}
+            QFrame#Card:hover {{
+                background-color: {hover};
+                border: 1px solid {theme.border};
+            }}
+            QFrame#Card > QLabel {{
+                color: {color};
+                background-color: transparent;
+            }}
         """)
     
     def mousePressEvent(self, event):

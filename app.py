@@ -23,11 +23,19 @@ def main():
             # 项目页面
             with Column() as project_page:
                 with Row():
+                    Card(title="项目 1", description="""这是项目 11111111111111111111111111 \n 1111111111111111111111111111111111111111 \n 1111111111111111111111111111111111111111""", icon="📁", variant='secondary')
+                    Card(title="项目 2", description="这是项目 2", icon="📁", variant='secondary')
+                    Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
                     Card(title="项目 1", description="这是项目 1", icon="📁", variant='secondary')
                     Card(title="项目 2", description="这是项目 2", icon="📁", variant='secondary')
                     Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
                     Card(title="项目 1", description="这是项目 1", icon="📁", variant='secondary')
                     Card(title="项目 2", description="这是项目 2", icon="📁", variant='secondary')
+                    Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
+                    Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
+                    Card(title="项目 1", description="这是项目 1", icon="📁", variant='secondary')
+                    Card(title="项目 2", description="这是项目 2", icon="📁", variant='secondary')
+                    Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
                     Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
                     Card(title="项目 1", description="这是项目 1", icon="📁", variant='secondary')
                     Card(title="项目 2", description="这是项目 2", icon="📁", variant='secondary')

@@ -27,23 +27,31 @@ class Row(QWidget, _ContextMixin):
         self._relayout_timer.start(10)
     
     def _do_relayout(self):
-        # 根据窗口宽度计算列数并重新排列 widget
-        while self._layout.count():
-            item = self._layout.takeAt(0)
-            if item and item.widget():
-                item.widget().setParent(None)
         if not self._widgets:
             return
         
         width = self.width()
         if width <= 0:
-            width = 400
+            return
         
         spacing = self._layout.spacing()
         margin = self._layout.contentsMargins()
         available = width - margin.left() - margin.right()
         min_w = 200
         cols = max(1, (available + spacing) // (min_w + spacing))
+        
+        if not hasattr(self, '_last_cols'):
+            self._last_cols = 0
+        
+        if cols == self._last_cols and self._layout.count() == len(self._widgets):
+            return
+        
+        self._last_cols = cols
+        
+        while self._layout.count():
+            item = self._layout.takeAt(0)
+            if item and item.widget():
+                item.widget().setParent(None)
         
         for i, widget in enumerate(self._widgets):
             if widget.parent() != self:
