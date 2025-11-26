@@ -1,6 +1,6 @@
 import sys
 from PyQt6.QtWidgets import QApplication
-from component.gradio import Blocks, Row, Column, Button, ThemeToggleButton, Card
+from component import Blocks, Row, Column, Button, ThemeToggleButton, Card
 
 
 def main():
