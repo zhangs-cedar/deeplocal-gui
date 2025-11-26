@@ -11,28 +11,28 @@ def main():
         ThemeToggleButton(blocks)
         
         with Row():
-            Button("按钮 1", variant='primary')
+            Button("按钮 1123124123", variant='secondary')
             Button("按钮 2", variant='secondary')
             Button("按钮 3", variant='secondary')
         
         with Row():
             btn2 = Card(
                 title="大按钮 2",
-                description="支持图标、标题和描述文字",
-                icon="⭐",
+                description="点击大按钮区域会触发 print",
+                icon="⭐",   
                 variant='secondary'
             )
             Card(
                 title="大按钮 1",
                 description="点击大按钮区域会触发 print",
                 icon="🚀",
-                variant='primary'
+                variant='secondary'
             )
             btn3 = Card(
                 title="大按钮 3",
                 description="点击大按钮区域会触发",
                 icon="💡",
-                variant='primary'
+                variant='secondary'
             )
             btn2.click(lambda: print("大按钮 2 被点击了！"))
             btn3.click(lambda: print("大按钮 3 被点击了！"))
