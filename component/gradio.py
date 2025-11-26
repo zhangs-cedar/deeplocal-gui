@@ -218,13 +218,11 @@ class Card(QFrame, _ContextMixin):
         super().__init__(parent)
         self.setFrameShape(QFrame.Shape.Box)
         self.setLineWidth(1)
-        self._title = title
-        self._description = description
-        self._icon = icon
         self._variant = variant
         
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setAttribute(Qt.WidgetAttribute.WA_Hover, True)
+        self.setObjectName("Card")
         
         layout = QVBoxLayout(self)
         layout.setContentsMargins(16, 16, 16, 16)
@@ -232,14 +230,10 @@ class Card(QFrame, _ContextMixin):
         
         if icon:
             icon_label = QLabel()
-            try:
-                icon_path = Path(icon) if isinstance(icon, str) else icon
-                if icon_path.exists():
-                    icon_label.setPixmap(QIcon(str(icon_path)).pixmap(32, 32))
-                else:
-                    icon_label.setText(str(icon))
-                    icon_label.setStyleSheet("font-size: 24px;")
-            except:
+            icon_path = Path(icon) if isinstance(icon, str) else icon
+            if icon_path.exists():
+                icon_label.setPixmap(QIcon(str(icon_path)).pixmap(32, 32))
+            else:
                 icon_label.setText(str(icon))
                 icon_label.setStyleSheet("font-size: 24px;")
             layout.addWidget(icon_label)
@@ -250,57 +244,37 @@ class Card(QFrame, _ContextMixin):
             layout.addWidget(title_label)
         
         if description:
-            desc_label = QLabel(description)
-            desc_label.setWordWrap(True)
-            desc_label.setStyleSheet("font-size: 13px; opacity: 0.7;")
-            layout.addWidget(desc_label)
+            desc = QLabel(description)
+            desc.setWordWrap(True)
+            desc.setStyleSheet("font-size: 13px; opacity: 0.7;")
+            layout.addWidget(desc)
         
         layout.addStretch()
-        
-        self.setObjectName("Card")
         self._apply_style()
         if not parent:
             _auto_add_to_context(self)
     
     def _apply_style(self):
         theme = _get_theme(self)
-        if self._variant == 'primary':
-            bg, hover, color = theme.primary, theme.primary_hover, "#FFFFFF"
-        else:
-            bg, hover, color = theme.bg_secondary, theme.border, theme.text
-        
+        bg, hover, color = (theme.primary, theme.primary_hover, "#FFFFFF") if self._variant == 'primary' else (theme.bg_secondary, theme.border, theme.text)
         self.setStyleSheet(f"""
-            QFrame#Card {{
-                background-color: {bg};
-                border: 1px solid {theme.border};
-                border-radius: 12px;
-            }}
-            QFrame#Card:hover {{
-                background-color: {hover};
-                border-color: {theme.border};
-            }}
-            QFrame#Card > QLabel {{
-                color: {color};
-                background-color: transparent;
-            }}
+            QFrame#Card {{ background-color: {bg}; border: 1px solid {theme.border}; border-radius: 12px; }}
+            QFrame#Card:hover {{ background-color: {hover}; }}
+            QFrame#Card > QLabel {{ color: {color}; background-color: transparent; }}
         """)
     
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
             child = self.childAt(event.pos())
-            if child and isinstance(child, (QPushButton, Button)):
-                return
-            self.clicked_signal.emit()
+            if not (child and isinstance(child, (QPushButton, Button))):
+                self.clicked_signal.emit()
         super().mousePressEvent(event)
     
     def click(self, fn=None):
-        if fn:
-            return self.clicked_signal.connect(fn)
-        return self.clicked_signal
+        return self.clicked_signal.connect(fn) if fn else self.clicked_signal
     
     def addWidget(self, widget: QWidget):
-        layout = self.layout()
-        layout.insertWidget(layout.count() - 1, widget)
+        self.layout().insertWidget(self.layout().count() - 1, widget)
 
 
 class ThemeToggleButton(Button):
