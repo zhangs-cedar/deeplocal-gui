@@ -1,5 +1,5 @@
 import sys
-from PyQt6.QtWidgets import QApplication
+from PyQt6.QtWidgets import QApplication, QLabel
 from component import Blocks, Row, Column, Button, Card, Header
 
 
@@ -16,15 +16,20 @@ def main():
     with Blocks(theme='light') as blocks:
         blocks.setWindowTitle("简化示例")
         blocks.resize(800, 600)
-        header = Header(
-            title="简化示例", 
-            icon="🚀", 
-            avatar="👤", 
-            blocks=blocks,
-            on_title_click=on_title_click,
-            on_avatar_click=on_avatar_click
-        )
-        blocks.setHeader(header)
+                
+        # 使用 with 语法，更优雅
+        with Header(blocks=blocks) as header:
+            header.addLeft(QLabel("🚀"))  # 左侧添加图标
+            title_btn = Button("简化示例", variant='text')
+            title_btn.clicked_signal.connect(on_title_click)
+            header.addLeft(title_btn)  # 左侧添加标题按钮
+            header.addCenter(Button("居中按钮", variant='text'))  # 中间添加按钮
+            header.addCenter(Button("居中按钮", variant='text'))  # 中间添加按钮
+            header.addCenter(Button("居中按钮", variant='text'))  # 中间添加按钮
+            avatar_btn = Button("👤", variant='text')
+            avatar_btn.clicked_signal.connect(on_avatar_click)
+            header.addRight(avatar_btn)  # 右侧添加头像按钮
+            blocks.setHeader(header)
         
         with Row():
             Button("按钮 1123124123", variant='secondary')

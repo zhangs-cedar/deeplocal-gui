@@ -1,47 +1,56 @@
-from typing import Union, Optional, Callable
-from pathlib import Path
-from PyQt6.QtWidgets import QWidget, QHBoxLayout, QLabel, QPushButton
+from typing import Optional
+from PyQt6.QtWidgets import QWidget, QHBoxLayout
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QIcon, QPixmap
 from .theme import _get_theme
 from .blocks import Blocks
 from .button import Button
+from .context import _ContextMixin
 
 
-class Header(QWidget):
-    def __init__(self, title: str = "", icon: Union[str, Path] = None, avatar: Union[str, Path] = None, 
-                 blocks: Optional[Blocks] = None, on_title_click: Optional[Callable] = None,
-                 on_avatar_click: Optional[Callable] = None, parent=None):
+class Header(QWidget, _ContextMixin):
+    def __init__(self, blocks: Optional[Blocks] = None, parent=None):
         super().__init__(parent)
         self.setFixedHeight(60)
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
         self._theme_btn = None
-        self._title_btn = None
-        self._avatar_btn = None
         
-        layout = QHBoxLayout(self)
-        layout.setContentsMargins(20, 0, 20, 0)
-        layout.setSpacing(16)
+        main_layout = QHBoxLayout(self)
+        main_layout.setContentsMargins(20, 0, 20, 0)
+        main_layout.setSpacing(16)
         
-        if icon:
-            layout.addWidget(self._create_icon_label(icon))
+        self._left_layout = QHBoxLayout()
+        self._left_layout.setSpacing(16)
+        self._left_layout.setContentsMargins(0, 0, 0, 0)
         
-        if title:
-            self._title_btn = self._create_title_button(title, on_title_click)
-            layout.addWidget(self._title_btn)
+        self._center_layout = QHBoxLayout()
+        self._center_layout.setSpacing(16)
+        self._center_layout.setContentsMargins(0, 0, 0, 0)
         
-        layout.addStretch()
+        self._right_layout = QHBoxLayout()
+        self._right_layout.setSpacing(16)
+        self._right_layout.setContentsMargins(0, 0, 0, 0)
+        
+        main_layout.addLayout(self._left_layout)
+        main_layout.addStretch()
+        main_layout.addLayout(self._center_layout)
+        main_layout.addStretch()
+        main_layout.addLayout(self._right_layout)
         
         blocks_instance = blocks or self._find_blocks()
         if blocks_instance:
             self._theme_btn = self._create_theme_button(blocks_instance)
-            layout.addWidget(self._theme_btn)
-        
-        if avatar:
-            self._avatar_btn = self._create_avatar_button(avatar, on_avatar_click)
-            layout.addWidget(self._avatar_btn)
+            self.addRight(self._theme_btn)
         
         self._apply_style()
+    
+    def addLeft(self, widget: QWidget):
+        self._left_layout.addWidget(widget)
+    
+    def addCenter(self, widget: QWidget):
+        self._center_layout.addWidget(widget)
+    
+    def addRight(self, widget: QWidget):
+        self._right_layout.addWidget(widget)
     
     def _find_blocks(self) -> Optional[Blocks]:
         current = self.parent()
@@ -50,16 +59,6 @@ class Header(QWidget):
                 return current
             current = current.parent()
         return None
-    
-    def _create_icon_label(self, icon: Union[str, Path]) -> QLabel:
-        icon_path = Path(icon) if isinstance(icon, str) else icon
-        label = QLabel()
-        if icon_path.exists():
-            label.setPixmap(QIcon(str(icon_path)).pixmap(32, 32))
-        else:
-            label.setText(str(icon))
-            label.setStyleSheet("font-size: 24px;")
-        return label
     
     def _create_theme_button(self, blocks: Blocks) -> Button:
         btn = Button("", 'secondary', self)
@@ -82,29 +81,6 @@ class Header(QWidget):
         self._update_theme_text(btn)
         return btn
     
-    def _create_title_button(self, title: str, on_click: Optional[Callable] = None) -> QPushButton:
-        btn = QPushButton(title, self)
-        btn.setStyleSheet("font-size: 18px; font-weight: 600; text-align: left; border: none; background: transparent;")
-        btn.setCursor(Qt.CursorShape.PointingHandCursor)
-        if on_click:
-            btn.clicked.connect(on_click)
-        return btn
-    
-    def _create_avatar_button(self, avatar: Union[str, Path], on_click: Optional[Callable] = None) -> QPushButton:
-        avatar_path = Path(avatar) if isinstance(avatar, str) else avatar
-        btn = QPushButton(self)
-        if avatar_path.exists():
-            pixmap = QPixmap(str(avatar_path))
-            btn.setIcon(QIcon(pixmap.scaled(32, 32, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)))
-        else:
-            btn.setText(str(avatar))
-        btn.setFixedSize(32, 32)
-        btn.setStyleSheet("border-radius: 16px; border: none; background: transparent;")
-        btn.setCursor(Qt.CursorShape.PointingHandCursor)
-        if on_click:
-            btn.clicked.connect(on_click)
-        return btn
-    
     def _update_theme_text(self, btn: Button):
         btn.setText("🌙" if btn._blocks._theme.mode == 'light' else "☀️")
     
@@ -119,18 +95,6 @@ class Header(QWidget):
             QLabel {{ color: {theme.text}; }}
             QPushButton {{ background-color: transparent; color: {theme.text}; }}
         """)
-        if self._title_btn:
-            self._title_btn.setStyleSheet(f"""
-                QPushButton {{
-                    font-size: 18px;
-                    font-weight: 600;
-                    text-align: left;
-                    border: none;
-                    background: transparent;
-                    color: {theme.text};
-                }}
-                QPushButton:hover {{ opacity: 0.7; }}
-            """)
         if self._theme_btn:
             self._theme_btn.setStyleSheet(f"""
                 QPushButton {{

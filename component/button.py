@@ -8,7 +8,7 @@ from .context import _auto_add_to_context
 class Button(QPushButton):
     clicked_signal = pyqtSignal()
     
-    def __init__(self, value: str = "Run", variant: Literal['primary', 'secondary'] = 'secondary', parent=None):
+    def __init__(self, value: str = "Run", variant: Literal['primary', 'secondary', 'text'] = 'secondary', parent=None):
         # 初始化按钮，设置样式和信号连接
         super().__init__(str(value), parent)
         self._variant = variant
@@ -26,14 +26,19 @@ class Button(QPushButton):
         theme = _get_theme(self)
         if self._variant == 'primary':
             bg, hover, color = theme.primary, theme.primary_hover, "#FFFFFF"
+            border = f"1px solid {theme.border}"
+        elif self._variant == 'text':
+            bg, hover, color = "transparent", theme.bg_secondary, theme.text
+            border = "none"
         else:
             bg, hover, color = theme.bg_secondary, theme.border, theme.text
+            border = f"1px solid {theme.border}"
         
         self.setStyleSheet(f"""
             QPushButton {{
                 background-color: {bg};
                 color: {color};
-                border: 1px solid {theme.border};
+                border: {border};
                 border-radius: 8px;
                 padding: 8px 20px;
                 font-size: 14px;
