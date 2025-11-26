@@ -3,12 +3,27 @@ from PyQt6.QtWidgets import QApplication
 from component import Blocks, Row, Column, Button, Card, Header
 
 
+def on_title_click():
+    print("标题被点击了！")
+
+
+def on_avatar_click():
+    print("头像被点击了！")
+
+
 def main():
     app = QApplication(sys.argv)
     with Blocks(theme='light') as blocks:
         blocks.setWindowTitle("简化示例")
         blocks.resize(800, 600)
-        header = Header(title="简化示例", icon="🚀", avatar="👤", blocks=blocks)
+        header = Header(
+            title="简化示例", 
+            icon="🚀", 
+            avatar="👤", 
+            blocks=blocks,
+            on_title_click=on_title_click,
+            on_avatar_click=on_avatar_click
+        )
         blocks.setHeader(header)
         
         with Row():

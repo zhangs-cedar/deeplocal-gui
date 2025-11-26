@@ -1,4 +1,4 @@
-from typing import Union, Optional
+from typing import Union, Optional, Callable
 from pathlib import Path
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QLabel, QPushButton
 from PyQt6.QtCore import Qt
@@ -10,11 +10,14 @@ from .button import Button
 
 class Header(QWidget):
     def __init__(self, title: str = "", icon: Union[str, Path] = None, avatar: Union[str, Path] = None, 
-                 blocks: Optional[Blocks] = None, parent=None):
+                 blocks: Optional[Blocks] = None, on_title_click: Optional[Callable] = None,
+                 on_avatar_click: Optional[Callable] = None, parent=None):
         super().__init__(parent)
         self.setFixedHeight(60)
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
         self._theme_btn = None
+        self._title_btn = None
+        self._avatar_btn = None
         
         layout = QHBoxLayout(self)
         layout.setContentsMargins(20, 0, 20, 0)
@@ -24,9 +27,8 @@ class Header(QWidget):
             layout.addWidget(self._create_icon_label(icon))
         
         if title:
-            title_label = QLabel(title)
-            title_label.setStyleSheet("font-size: 18px; font-weight: 600;")
-            layout.addWidget(title_label)
+            self._title_btn = self._create_title_button(title, on_title_click)
+            layout.addWidget(self._title_btn)
         
         layout.addStretch()
         
@@ -36,7 +38,8 @@ class Header(QWidget):
             layout.addWidget(self._theme_btn)
         
         if avatar:
-            layout.addWidget(self._create_avatar_button(avatar))
+            self._avatar_btn = self._create_avatar_button(avatar, on_avatar_click)
+            layout.addWidget(self._avatar_btn)
         
         self._apply_style()
     
@@ -79,16 +82,27 @@ class Header(QWidget):
         self._update_theme_text(btn)
         return btn
     
-    def _create_avatar_button(self, avatar: Union[str, Path]) -> QPushButton:
+    def _create_title_button(self, title: str, on_click: Optional[Callable] = None) -> QPushButton:
+        btn = QPushButton(title, self)
+        btn.setStyleSheet("font-size: 18px; font-weight: 600; text-align: left; border: none; background: transparent;")
+        btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        if on_click:
+            btn.clicked.connect(on_click)
+        return btn
+    
+    def _create_avatar_button(self, avatar: Union[str, Path], on_click: Optional[Callable] = None) -> QPushButton:
         avatar_path = Path(avatar) if isinstance(avatar, str) else avatar
-        btn = QPushButton()
+        btn = QPushButton(self)
         if avatar_path.exists():
             pixmap = QPixmap(str(avatar_path))
             btn.setIcon(QIcon(pixmap.scaled(32, 32, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)))
         else:
             btn.setText(str(avatar))
         btn.setFixedSize(32, 32)
-        btn.setStyleSheet("border-radius: 16px; border: none;")
+        btn.setStyleSheet("border-radius: 16px; border: none; background: transparent;")
+        btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        if on_click:
+            btn.clicked.connect(on_click)
         return btn
     
     def _update_theme_text(self, btn: Button):
@@ -103,8 +117,20 @@ class Header(QWidget):
         self.setStyleSheet(f"""
             QWidget {{ background-color: {theme.bg}; border-top: 1px solid #000000; border-bottom: 1px solid {theme.border}; }}
             QLabel {{ color: {theme.text}; }}
-            QPushButton {{ background-color: transparent; }}
+            QPushButton {{ background-color: transparent; color: {theme.text}; }}
         """)
+        if self._title_btn:
+            self._title_btn.setStyleSheet(f"""
+                QPushButton {{
+                    font-size: 18px;
+                    font-weight: 600;
+                    text-align: left;
+                    border: none;
+                    background: transparent;
+                    color: {theme.text};
+                }}
+                QPushButton:hover {{ opacity: 0.7; }}
+            """)
         if self._theme_btn:
             self._theme_btn.setStyleSheet(f"""
                 QPushButton {{
