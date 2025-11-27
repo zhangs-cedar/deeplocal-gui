@@ -1,11 +1,11 @@
 import sys
 import os
-from PyQt6.QtWidgets import QApplication, QLabel
+from PyQt6.QtWidgets import QApplication
 
 # 启用高 DPI 缩放（必须在创建 QApplication 之前设置）
 os.environ['QT_ENABLE_HIGHDPI_SCALING'] = '1'
 
-from component import Blocks, Row, Column, Button, Card, Header, ThemeButton, Pages
+from component import Blocks, Row, Column, Button, Card, Header, ThemeButton, Pages, Label
 
 def on_title_click():
     print("标题被点击了！")
@@ -23,42 +23,53 @@ def main():
             # 页面页面 - 使用工厂函数延迟加载
             def create_project_page():
                 with Row() as project_page:
-                    Card(title="页面 1", description="""这是页面 """, icon="📁", variant='secondary', on_click=lambda: pages.set_current_page("页面1-1"))
-                    Card(title="页面 2", description="这是页面 2", icon="📁", variant='secondary')
+                    with Card(variant='secondary', on_click=lambda: pages.set_current_page("页面1-1")) as card1:
+                        Label("📁")
+                        Label("页面 1")
+                        Label("这是页面")
+                    
+                    with Card(variant='secondary') as card2:
+                        Label("📁")
+                        Label("页面 2")
+                        Label("这是页面 2")
                 return project_page
             
             # 模版页面 - 使用工厂函数延迟加载
             def create_template_page():
                 with Row() as template_page:
-                    Card(title="模版 1", description="这是模版 1", icon="📄", variant='secondary')
-                    Card(title="模版 2", description="这是模版 2", icon="📄", variant='secondary')
-                    Card(title="页面 3", description="这是页面 3", icon="📁", variant='secondary')
-                    Card(title="模版 1", description="这是模版 1", icon="📄", variant='secondary')
-                    Card(title="模版 2", description="这是模版 2", icon="📄", variant='secondary')
-                    Card(title="页面 3", description="这是页面 3", icon="📁", variant='secondary')
-                    Card(title="模版 1", description="这是模版 1", icon="📄", variant='secondary')
-                    Card(title="模版 2", description="这是模版 2", icon="📄", variant='secondary')
-                    Card(title="页面 3", description="这是页面 3", icon="📁", variant='secondary')
-                    Card(title="模版 1", description="这是模版 1", icon="📄", variant='secondary')
-                    Card(title="模版 2", description="这是模版 2", icon="📄", variant='secondary')
-                    Card(title="页面 3", description="这是页面 3", icon="📁", variant='secondary')
-                    Card(title="模版 1", description="这是模版 1", icon="📄", variant='secondary')
-                    Card(title="模版 2", description="这是模版 2", icon="📄", variant='secondary')
-                    Card(title="页面 3", description="这是页面 3", icon="📁", variant='secondary')
+                    for i in range(15):
+                        with Card(variant='secondary') as card:
+                            Label("📄" if i % 3 != 2 else "📁")
+                            Label(f"模版 {i+1}" if i % 3 != 2 else f"页面 {i+1}")
+                            Label("这是模版" if i % 3 != 2 else "这是页面")
                 return template_page
             
             # 社区页面 - 使用工厂函数延迟加载
             def create_community_page():
                 with Row() as community_page:
-                    Card(title="页面3", description="查看社区最新动态", icon="👥", variant='secondary')
-                    Card(title="页面4", description="浏览热门话题", icon="🔥", variant='secondary')
+                    with Card(variant='secondary') as card1:
+                        Label("👥")
+                        Label("页面3")
+                        Label("查看社区最新动态")
+                    
+                    with Card(variant='secondary') as card2:
+                        Label("🔥")
+                        Label("页面4")
+                        Label("浏览热门话题")
                 return community_page
             
             # 工作区页面 - 使用工厂函数延迟加载
             def create_workspace_page():
                 with Row() as workspace_page:
-                    Card(title="工作区 1", description="这是工作区 1", icon="💼", variant='secondary')
-                    Card(title="工作区 2", description="这是工作区 2", icon="💼", variant='secondary')
+                    with Card(variant='secondary') as card1:
+                        Label("💼")
+                        Label("工作区 1")
+                        Label("这是工作区 1")
+                    
+                    with Card(variant='secondary') as card2:
+                        Label("💼")
+                        Label("工作区 2")
+                        Label("这是工作区 2")
                 return workspace_page
             
             pages.add_page("页面1", create_project_page)

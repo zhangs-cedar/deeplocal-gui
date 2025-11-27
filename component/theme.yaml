@@ -20,23 +20,3 @@ components:
         text_color: '#FFFFFF'
       secondary:
         text_color: null
-  _card_styles:
-    compact:
-      border_radius: 8
-      padding: 12
-      spacing: 6
-      max_width: 300
-      max_height: 200
-      title_font_size: 14
-      desc_font_size: 12
-      icon_font_size: 20
-    large:
-      border_radius: 16
-      padding: 24
-      spacing: 12
-      max_width: 500
-      max_height: 400
-      title_font_size: 20
-      title_font_weight: 700
-      desc_font_size: 15
-      icon_font_size: 32
