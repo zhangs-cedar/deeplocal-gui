@@ -8,40 +8,6 @@ def on_title_click():
 def on_avatar_click():
     print("头像被点击了！")
 
-def create_project_page():
-    with Row() as project_page:
-        Card(title="项目 1", description="""这是项目 11111111111111111111111111 \n 1111111111111111111111111111111111111111 \n 1111111111111111111111111111111111111111""", icon="📁", variant='secondary')
-        Card(title="项目 2", description="这是项目 2", icon="📁", variant='secondary')
-    return project_page
-
-# 模版页面 - 使用工厂函数延迟加载
-def create_template_page():
-    with Row() as template_page:
-        Card(title="模版 1", description="这是模版 1", icon="📄", variant='secondary')
-        Card(title="模版 2", description="这是模版 2", icon="📄", variant='secondary')
-        Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
-        Card(title="模版 1", description="这是模版 1", icon="📄", variant='secondary')
-        Card(title="模版 2", description="这是模版 2", icon="📄", variant='secondary')
-        Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
-        Card(title="模版 1", description="这是模版 1", icon="📄", variant='secondary')
-        Card(title="模版 2", description="这是模版 2", icon="📄", variant='secondary')
-        Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
-        Card(title="模版 1", description="这是模版 1", icon="📄", variant='secondary')
-        Card(title="模版 2", description="这是模版 2", icon="📄", variant='secondary')
-        Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
-        Card(title="模版 1", description="这是模版 1", icon="📄", variant='secondary')
-        Card(title="模版 2", description="这是模版 2", icon="📄", variant='secondary')
-        Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
-    return template_page
-
-# 社区页面 - 使用工厂函数延迟加载
-def create_community_page():
-    with Row() as community_page:
-        Card(title="社区动态", description="查看社区最新动态", icon="👥", variant='secondary')
-        Card(title="热门话题", description="浏览热门话题", icon="🔥", variant='secondary')
-    return community_page
-
-
 def main():
     app = QApplication(sys.argv)
     with Blocks(theme='light') as blocks:
@@ -50,9 +16,50 @@ def main():
         # 创建不同的页面（使用延迟加载，只在点击时才渲染）
         with Pages() as pages:
             # 项目页面 - 使用工厂函数延迟加载
+            def create_project_page():
+                with Row() as project_page:
+                    Card(title="项目 1", description="""这是项目 """, icon="📁", variant='secondary', on_click=lambda: pages.set_current_page("工作区"))
+                    Card(title="项目 2", description="这是项目 2", icon="📁", variant='secondary')
+                return project_page
+            
+            # 模版页面 - 使用工厂函数延迟加载
+            def create_template_page():
+                with Row() as template_page:
+                    Card(title="模版 1", description="这是模版 1", icon="📄", variant='secondary')
+                    Card(title="模版 2", description="这是模版 2", icon="📄", variant='secondary')
+                    Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
+                    Card(title="模版 1", description="这是模版 1", icon="📄", variant='secondary')
+                    Card(title="模版 2", description="这是模版 2", icon="📄", variant='secondary')
+                    Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
+                    Card(title="模版 1", description="这是模版 1", icon="📄", variant='secondary')
+                    Card(title="模版 2", description="这是模版 2", icon="📄", variant='secondary')
+                    Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
+                    Card(title="模版 1", description="这是模版 1", icon="📄", variant='secondary')
+                    Card(title="模版 2", description="这是模版 2", icon="📄", variant='secondary')
+                    Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
+                    Card(title="模版 1", description="这是模版 1", icon="📄", variant='secondary')
+                    Card(title="模版 2", description="这是模版 2", icon="📄", variant='secondary')
+                    Card(title="项目 3", description="这是项目 3", icon="📁", variant='secondary')
+                return template_page
+            
+            # 社区页面 - 使用工厂函数延迟加载
+            def create_community_page():
+                with Row() as community_page:
+                    Card(title="社区动态", description="查看社区最新动态", icon="👥", variant='secondary')
+                    Card(title="热门话题", description="浏览热门话题", icon="🔥", variant='secondary')
+                return community_page
+            
+            # 工作区页面 - 使用工厂函数延迟加载
+            def create_workspace_page():
+                with Row() as workspace_page:
+                    Card(title="工作区 1", description="这是工作区 1", icon="💼", variant='secondary')
+                    Card(title="工作区 2", description="这是工作区 2", icon="💼", variant='secondary')
+                return workspace_page
+            
             pages.add_page("项目", create_project_page)
             pages.add_page("模版", create_template_page)
             pages.add_page("社区", create_community_page)
+            pages.add_page("工作区", create_workspace_page)
             
         pages.set_current_page("项目") # 默认显示项目页面
         # 使用 with 语法，更优雅
