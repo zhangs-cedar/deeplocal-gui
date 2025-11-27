@@ -3,7 +3,7 @@ from pathlib import Path
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QFrame
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QIcon
-from .theme import _get_theme
+from .theme import get_theme
 from .context import _ContextMixin, _auto_add_to_context
 
 
@@ -22,9 +22,22 @@ class Card(QFrame, _ContextMixin):
         self.setAttribute(Qt.WidgetAttribute.WA_Hover, True)
         self.setObjectName("Card")
         
+        from .theme import get_component_config
+        
+        card_config = get_component_config('card')
+        padding = card_config.get('padding', 16)
+        spacing = card_config.get('spacing', 8)
+        max_width = card_config.get('max_width', 400)
+        max_height = card_config.get('max_height', 300)
+        title_font_size = card_config.get('title_font_size', 16)
+        title_font_weight = card_config.get('title_font_weight', 600)
+        desc_font_size = card_config.get('desc_font_size', 13)
+        desc_opacity = card_config.get('desc_opacity', 0.7)
+        icon_font_size = card_config.get('icon_font_size', 24)
+        
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(16, 16, 16, 16)
-        layout.setSpacing(8)
+        layout.setContentsMargins(padding, padding, padding, padding)
+        layout.setSpacing(spacing)
         
         if icon:
             icon_label = QLabel()
@@ -33,23 +46,23 @@ class Card(QFrame, _ContextMixin):
                 icon_label.setPixmap(QIcon(str(icon_path)).pixmap(32, 32))
             else:
                 icon_label.setText(str(icon))
-                icon_label.setStyleSheet("font-size: 24px;")
+                icon_label.setStyleSheet(f"font-size: {icon_font_size}px;")
             layout.addWidget(icon_label)
         
         if title:
             title_label = QLabel(title)
-            title_label.setStyleSheet("font-size: 16px; font-weight: 600;")
+            title_label.setStyleSheet(f"font-size: {title_font_size}px; font-weight: {title_font_weight};")
             layout.addWidget(title_label)
         
         if description:
             desc = QLabel(description)
             desc.setWordWrap(True)
-            desc.setStyleSheet("font-size: 13px; opacity: 0.7;")
+            desc.setStyleSheet(f"font-size: {desc_font_size}px; opacity: {desc_opacity};")
             layout.addWidget(desc)
         
         layout.addStretch()
-        self.setMaximumHeight(300)
-        self.setMaximumWidth(400)
+        self.setMaximumHeight(max_height)
+        self.setMaximumWidth(max_width)
         self._apply_style()
         
         if on_click:
@@ -59,13 +72,33 @@ class Card(QFrame, _ContextMixin):
             _auto_add_to_context(self)
     
     def _apply_style(self):
-        theme = _get_theme(self)
-        bg, hover, color = (theme.primary, theme.primary_hover, "#FFFFFF") if self._variant == 'primary' else (theme.bg_secondary, theme.border, theme.text)
+        from .theme import get_theme, get_component_config
+        
+        theme = get_theme()
+        card_config = get_component_config('card')
+        
+        # 从配置读取样式值，如果没有则使用默认值
+        border_radius = card_config.get('border_radius', 12)
+        padding = card_config.get('padding', 16)
+        
+        # 根据 variant 选择颜色
+        if self._variant == 'primary':
+            bg = theme.primary
+            hover = theme.primary_hover
+            variant_config = card_config.get('variants', {}).get('primary', {})
+            color = variant_config.get('text_color', '#FFFFFF')
+        else:
+            bg = theme.bg_secondary
+            hover = theme.border
+            variant_config = card_config.get('variants', {}).get('secondary', {})
+            color = variant_config.get('text_color') or theme.text
+        
         self.setStyleSheet(f"""
             QFrame#Card {{
                 background-color: {bg};
                 border: 1px solid {theme.border};
-                border-radius: 12px;
+                border-radius: {border_radius}px;
+                padding: {padding}px;
             }}
             QFrame#Card:hover {{
                 background-color: {hover};

@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QWidget, QHBoxLayout
 from PyQt6.QtCore import Qt
-from .theme import _get_theme
+from .theme import get_theme
 from .context import _ContextMixin
 
 
@@ -44,7 +44,7 @@ class Header(QWidget, _ContextMixin):
         self._right_layout.addWidget(widget)
     
     def _apply_style(self):
-        theme = _get_theme(self)
+        theme = get_theme()
         self.setStyleSheet(f"""
             QWidget {{ background-color: {theme.bg}; border-top: 1px solid #000000; border-bottom: 1px solid {theme.border}; }}
             QLabel {{ color: {theme.text}; }}

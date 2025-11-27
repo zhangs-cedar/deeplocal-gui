@@ -1,7 +1,7 @@
 from typing import Literal, Optional, Callable
 from PyQt6.QtWidgets import QPushButton
 from PyQt6.QtCore import Qt, pyqtSignal
-from .theme import _get_theme
+from .theme import get_theme
 from .context import _auto_add_to_context
 
 
@@ -25,7 +25,7 @@ class Button(QPushButton):
         if hasattr(self, '_is_theme_button') and self._is_theme_button:
             return
         # 根据 variant 应用主题样式
-        theme = _get_theme(self)
+        theme = get_theme()
         if self._variant == 'primary':
             bg, hover, color = theme.primary, theme.primary_hover, "#FFFFFF"
             border = f"1px solid {theme.border}"

@@ -1,7 +1,7 @@
 from typing import Optional
 from .button import Button
 from .blocks import Blocks
-from .theme import _get_theme
+from .theme import get_theme
 
 
 class ThemeButton(Button):
@@ -26,7 +26,7 @@ class ThemeButton(Button):
         return None
     
     def _apply_style(self):
-        theme = _get_theme(self)
+        theme = get_theme()
         self.setStyleSheet(f"""
             QPushButton {{
                 background-color: {theme.bg_secondary};

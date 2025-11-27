@@ -1,0 +1,22 @@
+theme: light
+_common:
+  border_radius: 12
+  padding: 16
+  spacing: 8
+components:
+  card:
+    border_radius: 12
+    padding: 16
+    spacing: 8
+    max_width: 400
+    max_height: 300
+    title_font_size: 16
+    title_font_weight: 600
+    desc_font_size: 13
+    desc_opacity: 0.7
+    icon_font_size: 24
+    variants:
+      primary:
+        text_color: '#FFFFFF'
+      secondary:
+        text_color: null

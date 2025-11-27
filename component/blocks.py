@@ -1,15 +1,15 @@
 from typing import Union
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QScrollArea
 from PyQt6.QtCore import Qt
-from .theme import Theme
+from .theme import Theme, set_theme
 from .context import _ContextMixin, _auto_add_to_context
 
 
 class Blocks(QWidget, _ContextMixin):
     def __init__(self, parent=None, theme: Union[str, Theme] = 'light'):
-        # 初始化主窗口容器，设置滚动区域和主题
         super().__init__(parent)
         self._theme = Theme(theme) if isinstance(theme, str) else (theme or Theme('light'))
+        set_theme(self._theme)  # 设置全局主题
         
         self._main_layout = QVBoxLayout(self)
         self._main_layout.setContentsMargins(0, 0, 0, 0)
@@ -73,8 +73,8 @@ class Blocks(QWidget, _ContextMixin):
                 child._apply_style()
     
     def toggle_theme(self):
-        # 切换明暗主题
         self._theme = Theme('dark' if self._theme.mode == 'light' else 'light')
+        set_theme(self._theme)  # 更新全局主题
         self._apply_theme()
     
     def addWidget(self, widget: QWidget):
