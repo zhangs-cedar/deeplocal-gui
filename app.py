@@ -12,6 +12,72 @@ def on_title_click():
 
 def on_avatar_click():
     print("头像被点击了！")
+    
+def create_project_page(pages: Pages):
+    with Row() as project_page:
+        with Card(variant='secondary', on_click=lambda: pages.set_current_page("页面1-1")) as card1:
+            Label("📁")
+            Label("页面 1")
+            Label("这是页面")
+        
+        with Card(variant='secondary') as card2:
+            Label("📁")
+            Label("页面 2")
+            Label("这是页面 2")
+    return project_page
+
+# 模版页面 - 使用工厂函数延迟加载
+def create_template_page(pages: Pages):
+    with Row() as template_page:
+        for i in range(15):
+            with Card(variant='secondary') as card:
+                Label("📄" if i % 3 != 2 else "📁")
+                Label(f"模版 {i+1}" if i % 3 != 2 else f"页面 {i+1}")
+                Label("这是模版" if i % 3 != 2 else "这是页面")
+    return template_page
+
+# 社区页面 - 使用工厂函数延迟加载
+def create_community_page(pages: Pages):
+    with Row() as community_page:
+        with Card(variant='secondary') as card1:
+            Label("👥")
+            Label("页面3")
+            Label("查看社区最新动态")
+        
+        with Card(variant='secondary') as card2:
+            Label("🔥")
+            Label("页面4")
+            Label("浏览热门话题")
+    return community_page
+
+# 工作区页面 - 使用工厂函数延迟加载
+def create_workspace_page(pages: Pages):
+    with Row() as workspace_page:
+        with Card(variant='secondary') as card1:
+            Label("💼")
+            Label("工作区 1")
+            Label("这是工作区 1")
+        
+        with Card(variant='secondary') as card2:
+            Label("💼")
+            Label("工作区 2")
+            Label("这是工作区 2")
+    return workspace_page
+
+def create_header(pages: Pages, blocks: Blocks):
+    """创建头部组件"""
+    # 使用 with 语法，更优雅
+    with Header() as header:
+        header.addLeft(Button("🚀", variant='text'))
+        header.addLeft(Button("简化示例", variant='text', on_click=on_title_click))
+        # 点击按钮切换页面
+        header.addCenter(Button("页面1", variant='text', on_click=lambda: pages.set_current_page("页面1")))
+        header.addCenter(Button("页面2", variant='text', on_click=lambda: pages.set_current_page("页面2")))
+        header.addCenter(Button("页面3", variant='text', on_click=lambda: pages.set_current_page("页面3")))
+        header.addRight(ThemeButton(blocks))
+        header.addRight(Button("👤", variant='text', on_click=on_avatar_click))
+        blocks.setHeader(header)
+    return header
 
 def main():
     app = QApplication(sys.argv)
@@ -21,74 +87,13 @@ def main():
         # 创建不同的页面（使用延迟加载，只在点击时才渲染）
         with Pages() as pages:
             # 页面页面 - 使用工厂函数延迟加载
-            def create_project_page():
-                with Row() as project_page:
-                    with Card(variant='secondary', on_click=lambda: pages.set_current_page("页面1-1")) as card1:
-                        Label("📁")
-                        Label("页面 1")
-                        Label("这是页面")
-                    
-                    with Card(variant='secondary') as card2:
-                        Label("📁")
-                        Label("页面 2")
-                        Label("这是页面 2")
-                return project_page
-            
-            # 模版页面 - 使用工厂函数延迟加载
-            def create_template_page():
-                with Row() as template_page:
-                    for i in range(15):
-                        with Card(variant='secondary') as card:
-                            Label("📄" if i % 3 != 2 else "📁")
-                            Label(f"模版 {i+1}" if i % 3 != 2 else f"页面 {i+1}")
-                            Label("这是模版" if i % 3 != 2 else "这是页面")
-                return template_page
-            
-            # 社区页面 - 使用工厂函数延迟加载
-            def create_community_page():
-                with Row() as community_page:
-                    with Card(variant='secondary') as card1:
-                        Label("👥")
-                        Label("页面3")
-                        Label("查看社区最新动态")
-                    
-                    with Card(variant='secondary') as card2:
-                        Label("🔥")
-                        Label("页面4")
-                        Label("浏览热门话题")
-                return community_page
-            
-            # 工作区页面 - 使用工厂函数延迟加载
-            def create_workspace_page():
-                with Row() as workspace_page:
-                    with Card(variant='secondary') as card1:
-                        Label("💼")
-                        Label("工作区 1")
-                        Label("这是工作区 1")
-                    
-                    with Card(variant='secondary') as card2:
-                        Label("💼")
-                        Label("工作区 2")
-                        Label("这是工作区 2")
-                return workspace_page
-            
-            pages.add_page("页面1", create_project_page)
-            pages.add_page("页面2", create_template_page)
-            pages.add_page("页面3", create_community_page)
-            pages.add_page("页面1-1", create_workspace_page)
+            pages.add_page("页面1", lambda: create_project_page(pages))
+            pages.add_page("页面2", lambda: create_template_page(pages))
+            pages.add_page("页面3", lambda: create_community_page(pages))
+            pages.add_page("页面1-1", lambda: create_workspace_page(pages))
             
         pages.set_current_page("页面1") # 默认显示页面页面
-        # 使用 with 语法，更优雅
-        with Header() as header:
-            header.addLeft(Button("🚀", variant='text'))
-            header.addLeft(Button("简化示例", variant='text', on_click=on_title_click))
-            # 点击按钮切换页面
-            header.addCenter(Button("页面1", variant='text', on_click=lambda: pages.set_current_page("页面1")))
-            header.addCenter(Button("页面2", variant='text', on_click=lambda: pages.set_current_page("页面2")))
-            header.addCenter(Button("页面3", variant='text', on_click=lambda: pages.set_current_page("页面3")))
-            header.addRight(ThemeButton(blocks))
-            header.addRight(Button("👤", variant='text', on_click=on_avatar_click))
-            blocks.setHeader(header)
+        create_header(pages, blocks) # 创建头部组件
         
         
     
