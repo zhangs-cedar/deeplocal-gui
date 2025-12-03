@@ -58,9 +58,3 @@ def set_theme(theme: Theme):
     config = _load_config()
     config['theme'] = theme.mode
     _save_config(config)
-
-
-def get_component_config(component: str) -> dict:
-    """获取组件配置"""
-    config = _load_config()
-    return config.get('components', {}).get(component, {})
