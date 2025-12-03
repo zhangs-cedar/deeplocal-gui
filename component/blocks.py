@@ -30,10 +30,6 @@ class Blocks(QWidget, _ContextMixin):
         self._main_layout.addWidget(self._scroll)
         self._apply_theme()
     
-    def setHeader(self, header: QWidget):
-        # 设置顶部导航栏
-        self._main_layout.insertWidget(0, header)
-    
     def _apply_theme(self):
         bg = self._theme.bg
         if self._theme.mode == 'light':

@@ -1,12 +1,13 @@
 from PyQt6.QtWidgets import QWidget, QHBoxLayout
 from PyQt6.QtCore import Qt
 from .theme import get_theme
-from .context import _ContextMixin
+from .context import _ContextMixin, _auto_add_to_context
 
 
 class Header(QWidget, _ContextMixin):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, position: int = 0):
         super().__init__(parent)
+        self._header_position = position  # 配置 Header 在 Blocks 中的位置
         self.setFixedHeight(60)
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
         
@@ -33,6 +34,9 @@ class Header(QWidget, _ContextMixin):
         main_layout.addLayout(self._right_layout)
         
         self._apply_style()
+        
+        if not parent:
+            _auto_add_to_context(self)
     
     def addLeft(self, widget: QWidget):
         self._left_layout.addWidget(widget)
