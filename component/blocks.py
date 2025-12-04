@@ -22,7 +22,7 @@ class Blocks(QWidget, _ContextMixin):
         
         content = QWidget()
         self._layout = QVBoxLayout(content)
-        self._layout.setContentsMargins(20, 20, 20, 20)
+        self._layout.setContentsMargins(20, 0, 20, 20)  # 上边距改为 0，实现 0 间隙
         self._layout.setSpacing(20)
         self._layout.addStretch()
         self._scroll.setWidget(content)
