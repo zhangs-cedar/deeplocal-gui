@@ -29,33 +29,34 @@ def create_workspace_page(pages: Pages):
 
 def main():
     app = QApplication(sys.argv)
-    APP = {}
     with Blocks(theme='light') as blocks:
         blocks.setWindowTitle("简化示例")
         blocks.resize(800, 600)
-        
         # 先创建 pages 对象并添加到 APP，以便在 Header 中使用
-        pages = Pages()
-        APP["pages"] = pages
         with Header() as header:
             header.addLeft(Button("🚀", variant='text'))
-            header.addLeft(Button("简化示例", variant='text', on_click=on_title_click))
+            header.addLeft(Button("简化示例", variant='text'))
             # 点击按钮切换页面
-            header.addCenter(Button("页面1", variant='text', on_click=lambda: APP["pages"].set_current_page("页面1")))
-            header.addCenter(Button("页面2", variant='text', on_click=lambda: APP["pages"].set_current_page("页面2")))
-            header.addCenter(Button("页面3", variant='text', on_click=lambda: APP["pages"].set_current_page("页面3")))
+            header.addCenter(Button("页面1", variant='text'))
+            header.addCenter(Button("页面2", variant='text'))
+            header.addCenter(Button("页面3", variant='text'))
             header.addRight(ThemeButton(blocks))
             header.addRight(Button("👤", variant='text', on_click=on_avatar_click))
-        
+        with Card(variant='secondary') as card1:
+                    Label("💼")
+                    Label("工作区 1")
+                    Label("这是工作区 1")
         # 将 pages 添加到 Blocks 中，并配置页面
+        pages = Pages()
         blocks.addWidget(pages)
         pages.add_page("页面1", lambda: create_workspace_page(pages))
         pages.add_page("页面2", lambda: create_workspace_page(pages))
         pages.add_page("页面3", lambda: create_workspace_page(pages))
         pages.add_page("页面1-1", lambda: create_workspace_page(pages))
+        pages.set_current_page("页面1")
         
-    APP['blocks'] = blocks
-    APP["pages"].set_current_page("页面1")
+
+
     
     blocks.show()
     sys.exit(app.exec())

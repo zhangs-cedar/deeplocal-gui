@@ -1,18 +1,24 @@
+from typing import Union, Tuple
 from PyQt6.QtWidgets import QWidget, QHBoxLayout
 from PyQt6.QtCore import Qt
 from .theme import get_theme
-from .context import _ContextMixin, _auto_add_to_context
+from .context import _ContextMixin, _auto_add_to_context, _parse_margin_padding
 
 
 class Header(QWidget, _ContextMixin):
-    def __init__(self, parent=None, position: int = 0):
+    def __init__(self, parent=None, position: int = 0,
+                 margin: Union[int, Tuple[int, ...]] = 0,
+                 padding: Union[int, Tuple[int, ...]] = 0):
         super().__init__(parent)
-        self._header_position = position  # 配置 Header 在 Blocks 中的位置
+        self._header_position = position
+        self._margin_values = _parse_margin_padding(margin)
         self.setFixedHeight(50)
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
         
+        padding_values = _parse_margin_padding(padding)
+        
         main_layout = QHBoxLayout(self)
-        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setContentsMargins(*padding_values)
         main_layout.setSpacing(16) 
         
         self._left_layout = QHBoxLayout()
@@ -49,8 +55,14 @@ class Header(QWidget, _ContextMixin):
     
     def _apply_style(self):
         theme = get_theme()
+        margin_css = f"margin: {' '.join(map(str, self._margin_values))}px;"
         self.setStyleSheet(f"""
-            QWidget {{ background-color: {theme.bg}; border-top: 1px solid #000000; border-bottom: 1px solid {theme.border}; }}
+            QWidget {{ 
+                background-color: {theme.bg}; 
+                border-top: 1px solid #000000; 
+                border-bottom: 1px solid {theme.border};
+                {margin_css}
+            }}
             QLabel {{ color: {theme.text}; }}
             QPushButton {{ background-color: transparent; color: {theme.text}; }}
         """)

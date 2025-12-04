@@ -1,14 +1,20 @@
+from typing import Union, Tuple
 from PyQt6.QtWidgets import QWidget, QGridLayout
 from PyQt6.QtCore import QTimer
-from .context import _ContextMixin, _auto_add_to_context
+from .context import _ContextMixin, _auto_add_to_context, _parse_margin_padding
 
 
 class Row(QWidget, _ContextMixin):
-    def __init__(self, parent=None):
-        # 初始化响应式横向布局容器
+    def __init__(self, parent=None,
+                 margin: Union[int, Tuple[int, ...]] = 0,
+                 padding: Union[int, Tuple[int, ...]] = 0):
         super().__init__(parent)
+        margin_values = _parse_margin_padding(margin)
+        padding_values = _parse_margin_padding(padding)
+        self._margin = margin_values
+        
         self._layout = QGridLayout(self)
-        self._layout.setContentsMargins(0, 0, 0, 0)
+        self._layout.setContentsMargins(*padding_values)
         self._layout.setSpacing(0)
         self._widgets = []
         self._relayout_timer = QTimer(self)
@@ -58,12 +64,18 @@ class Row(QWidget, _ContextMixin):
                 widget.setParent(self)
             self._layout.addWidget(widget, i // cols, i % cols)
     
+    def _apply_style(self):
+        from .theme import get_theme
+        theme = get_theme()
+        margin_css = f"margin: {' '.join(map(str, self._margin))}px;"
+        self.setStyleSheet(f"QWidget {{ {margin_css} }}")
+    
     def showEvent(self, event):
-        # 显示时触发重新布局
         super().showEvent(event)
         self._schedule_relayout()
+        if hasattr(self, '_margin'):
+            self._apply_style()
     
     def resizeEvent(self, event):
-        # 窗口大小改变时触发重新布局
         super().resizeEvent(event)
         self._schedule_relayout()

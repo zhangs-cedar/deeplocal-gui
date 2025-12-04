@@ -1,18 +1,23 @@
-from typing import Union
+from typing import Union, Tuple
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QScrollArea
 from PyQt6.QtCore import Qt
 from .theme import Theme, set_theme
-from .context import _ContextMixin, _auto_add_to_context
+from .context import _ContextMixin, _auto_add_to_context, _parse_margin_padding
 
 
 class Blocks(QWidget, _ContextMixin):
-    def __init__(self, parent=None, theme: Union[str, Theme] = 'light'):
+    def __init__(self, parent=None, theme: Union[str, Theme] = 'light',
+                 margin: Union[int, Tuple[int, ...]] = 0,
+                 padding: Union[int, Tuple[int, ...]] = 0):
         super().__init__(parent)
         self._theme = Theme(theme) if isinstance(theme, str) else (theme or Theme('light'))
         set_theme(self._theme)
         
+        margin_values = _parse_margin_padding(margin)
+        padding_values = _parse_margin_padding(padding)
+        
         self._main_layout = QVBoxLayout(self)
-        self._main_layout.setContentsMargins(0, 0, 0, 0)
+        self._main_layout.setContentsMargins(*margin_values)
         self._main_layout.setSpacing(0)
         
         self._scroll = QScrollArea()
@@ -22,7 +27,8 @@ class Blocks(QWidget, _ContextMixin):
         
         content = QWidget()
         self._layout = QVBoxLayout(content)
-        self._layout.setContentsMargins(0, 0, 0, 0)
+        self._layout.setContentsMargins(*padding_values)
+        self._layout.setSpacing(0)
         self._layout.addStretch()
         self._scroll.setWidget(content)
         

@@ -1,5 +1,20 @@
-from typing import List
+from typing import List, Union, Tuple
 from PyQt6.QtWidgets import QWidget
+
+
+def _parse_margin_padding(value: Union[int, Tuple[int, ...]]) -> Tuple[int, int, int, int]:
+    """解析边距/内边距值，支持 int 或 tuple 格式"""
+    if isinstance(value, int):
+        return (value, value, value, value)
+    elif isinstance(value, tuple):
+        if len(value) == 1:
+            return (value[0], value[0], value[0], value[0])
+        elif len(value) == 2:
+            return (value[0], value[1], value[0], value[1])
+        elif len(value) == 4:
+            return tuple(value)
+    return (0, 0, 0, 0)
+
 
 _context_stack: List[QWidget] = []
 
