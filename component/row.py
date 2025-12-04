@@ -9,7 +9,7 @@ class Row(QWidget, _ContextMixin):
         super().__init__(parent)
         self._layout = QGridLayout(self)
         self._layout.setContentsMargins(0, 0, 0, 0)
-        self._layout.setSpacing(16)
+        self._layout.setSpacing(0)
         self._widgets = []
         self._relayout_timer = QTimer(self)
         self._relayout_timer.setSingleShot(True)

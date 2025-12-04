@@ -8,12 +8,12 @@ class Header(QWidget, _ContextMixin):
     def __init__(self, parent=None, position: int = 0):
         super().__init__(parent)
         self._header_position = position  # 配置 Header 在 Blocks 中的位置
-        self.setFixedHeight(60)
+        self.setFixedHeight(50)
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
         
         main_layout = QHBoxLayout(self)
-        main_layout.setContentsMargins(20, 0, 20, 0)
-        main_layout.setSpacing(16)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(16) 
         
         self._left_layout = QHBoxLayout()
         self._left_layout.setSpacing(16)
