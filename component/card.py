@@ -20,7 +20,7 @@ class Card(QFrame, _ContextMixin):
         
         self._layout = QVBoxLayout(self)
         self._layout.setContentsMargins(16, 16, 16, 16)
-        self._layout.setSpacing(8)
+        self._layout.setSpacing(0)
         
         self.setMaximumHeight(300)
         self.setMaximumWidth(400)
