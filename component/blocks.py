@@ -9,7 +9,7 @@ class Blocks(QWidget, _ContextMixin):
     def __init__(self, parent=None, theme: Union[str, Theme] = 'light'):
         super().__init__(parent)
         self._theme = Theme(theme) if isinstance(theme, str) else (theme or Theme('light'))
-        set_theme(self._theme)  # 设置全局主题
+        set_theme(self._theme)
         
         self._main_layout = QVBoxLayout(self)
         self._main_layout.setContentsMargins(0, 0, 0, 0)
@@ -22,8 +22,7 @@ class Blocks(QWidget, _ContextMixin):
         
         content = QWidget()
         self._layout = QVBoxLayout(content)
-        self._layout.setContentsMargins(20, 0, 20, 20)  # 上边距改为 0，实现 0 间隙
-        self._layout.setSpacing(20)
+        self._layout.setContentsMargins(0, 0, 0, 0)
         self._layout.addStretch()
         self._scroll.setWidget(content)
         
@@ -31,21 +30,15 @@ class Blocks(QWidget, _ContextMixin):
         self._apply_theme()
     
     def _apply_theme(self):
-        bg = self._theme.bg
-        if self._theme.mode == 'light':
-            scrollbar_color = "#CCCCCC"
-            scrollbar_hover = "#999999"
-        else:
-            scrollbar_color = "#666666"
-            scrollbar_hover = "#888888"
+        scrollbar_color = "#CCCCCC" if self._theme.mode == 'light' else "#666666"
+        scrollbar_hover = "#999999" if self._theme.mode == 'light' else "#888888"
         
         self.setStyleSheet(f"""
-            QWidget {{ background-color: {bg}; }}
+            QWidget {{ background-color: {self._theme.bg}; }}
             QScrollBar:vertical {{
                 border: none;
                 background: transparent;
                 width: 11px;
-                margin: 0px;
             }}
             QScrollBar::handle:vertical {{
                 background: {scrollbar_color};
@@ -57,7 +50,7 @@ class Blocks(QWidget, _ContextMixin):
                 background: {scrollbar_hover};
             }}
             QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {{
-                height: 0px;
+                height: 0;
             }}
             QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {{
                 background: transparent;
@@ -70,11 +63,10 @@ class Blocks(QWidget, _ContextMixin):
     
     def toggle_theme(self):
         self._theme = Theme('dark' if self._theme.mode == 'light' else 'light')
-        set_theme(self._theme)  # 更新全局主题
+        set_theme(self._theme)
         self._apply_theme()
     
     def addWidget(self, widget: QWidget):
-        # 添加 widget 到布局
         self._layout.removeItem(self._layout.itemAt(self._layout.count() - 1))
         self._layout.addWidget(widget)
         self._layout.addStretch()
