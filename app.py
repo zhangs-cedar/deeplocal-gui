@@ -16,15 +16,12 @@ def on_avatar_click():
 # 工作区页面 - 使用工厂函数延迟加载
 def create_workspace_page(pages: Pages):
     with Row() as workspace_page:
-        with Card(variant='secondary',margin=5) as card1:
-            Label("💼")
-            Label("工作区 1")
-            Label("这是工作区 1")
-        
-        with Card(variant='secondary',margin=5) as card2:
-            Label("💼")
-            Label("工作区 2")
-            Label("这是工作区 2")
+        for i in range(10):
+            with Card(variant='secondary',margin=5) as card:
+                Label("💼")
+                Label(f"工作区 {i}")
+                Label(f"这是工作区 {i}"+i*i*"#")
+                workspace_page.addWidget(card)
     return workspace_page
 
 def main():
@@ -42,10 +39,10 @@ def main():
             header.addCenter(Button("页面3", variant='text'))
             header.addRight(ThemeButton(blocks))
             header.addRight(Button("👤", variant='text', on_click=on_avatar_click))
-        with Card(variant='secondary',margin=5) as card1:
-                    Label("💼")
-                    Label("工作区 1")
-                    Label("这是工作区 1")
+        # with Card(variant='secondary',margin=5) as card1:
+        #             Label("💼")
+        #             Label("工作区 1")
+        #             Label("这是工作区 1")
         # 将 pages 添加到 Blocks 中，并配置页面
         pages = Pages()
         blocks.addWidget(pages)
