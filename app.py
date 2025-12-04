@@ -16,12 +16,12 @@ def on_avatar_click():
 # 工作区页面 - 使用工厂函数延迟加载
 def create_workspace_page(pages: Pages):
     with Row() as workspace_page:
-        with Card(variant='secondary') as card1:
+        with Card(variant='secondary',margin=5) as card1:
             Label("💼")
             Label("工作区 1")
             Label("这是工作区 1")
         
-        with Card(variant='secondary') as card2:
+        with Card(variant='secondary',margin=5) as card2:
             Label("💼")
             Label("工作区 2")
             Label("这是工作区 2")
@@ -42,7 +42,7 @@ def main():
             header.addCenter(Button("页面3", variant='text'))
             header.addRight(ThemeButton(blocks))
             header.addRight(Button("👤", variant='text', on_click=on_avatar_click))
-        with Card(variant='secondary') as card1:
+        with Card(variant='secondary',margin=5) as card1:
                     Label("💼")
                     Label("工作区 1")
                     Label("这是工作区 1")
